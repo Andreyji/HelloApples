@@ -52,3 +52,10 @@ variable "subnet" {
   default	  = "aks_subnet"
 }
 
+variable "mongo_pass" {
+  type		  = string
+  description = "The pass string you would like to use."
+  default	  = "P@ssw0rd1!"
+}
+
+
