@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apples-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: apples-app
+  template:
+    metadata:
+      labels:
+        app: apples-app
+    spec:
+      containers:
+      - name: apples-app
+        image: node:latest
+        ports:
+        - containerPort: 3000
+        env:
+		- name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-credentials
+              key: password
+		- name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-credentials
+              key: username
+        - name: NODE_ENV
+          value: production
+        - name: PORT
+          value: "3000"
+        - name: MONGODB_URI
+          value: "mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@mondodb:27017/application"
+        command: ["npm", "start"]
+        workingDir: /app
+        volumeMounts:
+        - name: node-modules
+          mountPath: /app/node_modules
+      volumes:
+      - name: node-modules
+        emptyDir: {}

@@ -54,3 +54,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
     client_secret = var.client_secret
   }
 }
+
+resource "kubernetes_manifest" "apples_app" {
+  yaml_body = file("apples_app.yaml")
+}
+
+resource "kubernetes_manifest" "mongo" {
+  yaml_body = file("mongo.yaml")
+}

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+          command: ["mongod"]
+          args: ["--dbpath=/data/db", "--port=27017", "--bind_ip=0.0.0.0", "--journal"]
+      volumes:
+        - name: mongodb-data
+          hostPath:
+            path: .\data.json 
+
+---
