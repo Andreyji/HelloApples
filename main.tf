@@ -16,8 +16,8 @@ provider "azurerm" {
 
 # Create a resource group
 resource "azurerm_resource_group" "aks" {
-  name     = ${var.resource_group}
-  location = ${var.location}
+  name     = var.resource_group
+  location = var.location
 }
 
 # Create Vnet and subnet
@@ -46,7 +46,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     name            = "default"
     node_count      = 1
     vm_size         = "Standard_DS2_v2"
-    vnet_subnet_id  = "/subscriptions/"${var.subscription_id}"/resourceGroups/"${var.resource_group}/providers/Microsoft.Network/virtualNetworks/"${var.vnet}/subnets/"${var.subnet}"
+    vnet_subnet_id  = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group}/providers/Microsoft.Network/virtualNetworks/${var.vnet}/subnets/${var.subnet}"
   }
 
   service_principal {
@@ -55,10 +55,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "kubernetes_manifest" "apples_app" {
-  yaml_body = file("apples_app.yaml")
-}
-
-resource "kubernetes_manifest" "mongo" {
-  yaml_body = file("mongo.yaml")
+resource "kubernetes_manifest" "manifests" {
+  for_each = fileset(".", "*.yaml")
+  manifest = yamldecode(file("./${each.value}"))
 }
