@@ -12,20 +12,22 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apples-app
+  labels:
+    name: apples-app
+  name: apples
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      app: apples-app
+      name: apples-app
   template:
     metadata:
       labels:
-        app: apples-app
+        name: apples-app
     spec:
       containers:
-      - name: apples-app
-        image: node:latest
+      - image: node:latest
+        name: apples-app
         ports:
         - containerPort: 3000
         env:
@@ -44,15 +46,20 @@ spec:
         - name: PORT
           value: "3000"
         - name: MONGODB_URI
-          value: "mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@mondodb:27017/application"
-        workingDir: /usr/local/lib/node_modules/npm/
-        command: ["npm", "start"]
+          value: "mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@mongo:27017/application"
+        #workingDir: /tmp/
+        #command: ["/bin/bash", "-c", "node server.js && npm run start && npm ls --depth=0"]
+        command: [ "/bin/bash", "-c", "$MOGODB_URI && while true; do sleep 30; done;" ]
+        args: [ "$MOGODB_URI" ]
         volumeMounts:
-        - name: node-modules
-          mountPath: /app/node_modules
+        #- name: node-modules
+        #  mountPath: /app/node_modules
+        - name: appvol
+          mountPath: /app
       volumes:
       - name: node-modules
         emptyDir: {}
-
-
-
+      - name: appvol
+        hostPath:
+          path: "C:/Users/Administrator.KOBI-LAT5480/Documents/Provisioning/TEST/app/"
+          type: Directory

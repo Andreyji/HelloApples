@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mongo
+  name: mongo
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    name: mongo
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: mongo
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: mongo
+  template:
+    metadata:
+      labels:
+        name: mongo
+    spec:
+      containers:
+      - image: mongo
+        name: mongo
+        ports:
+        - name: mongo
+          containerPort: 27017
+          hostPort: 27017
+        volumeMounts:
+        - mountPath: "/mnt/azure"
+          name: volume
+      #  - name: mongodb-data
+      #    mountPath: /data/db
+      volumes:
+      - name: volume
+        persistentVolumeClaim:
+          claimName: mongo-pv
+   #   - name: mongodb-data
+   #     hostPath:
+   #       path: "C:/Users/Administrator.KOBI-LAT5480/Documents/Provisioning"
+      

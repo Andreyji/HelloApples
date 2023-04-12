@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "=3.0.0"
     }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
   }
 }
 
@@ -18,6 +22,10 @@ provider "azurerm" {
 
 provider "azuread" {
   features {}
+}
+
+provider "kubernetes" {
+  config_path = "~/.kube/config"
 }
 
 #resource "azurerm_resource_provider_registration" "provider" {
@@ -73,7 +81,66 @@ resource "azurerm_kubernetes_cluster" "aks" {
   ]
 }
 
-resource "kubernetes_manifest" "manifests" {
-  for_each = fileset(".", "*.yaml")
-  manifest = yamldecode(file("./${each.value}"))
+data "kubectl_path_documents" "docs" {
+    pattern = "TEST/*.yml"
+}
+
+resource "kubectl_manifest" "app" {    
+   #for_each  = toset(data.kubectl_path_documents.docs.documents)
+   count     = length(data.kubectl_path_documents.docs.documents)
+   yaml_body = element(data.kubectl_path_documents.docs.documents, count.index)
+   depends_on = [azurerm_kubernetes_cluster.aks]
+}
+
+output "yaml_body" {
+    description = "The YAML files found"
+    value       = kubectl_manifest.app[*].yaml_body
+    sensitive = true
+}
+
+resource "null_resource" "copy_file_to_pod" {
+  provisioner "local-exec" {
+  command = "kubectl cp ./TEST/app/* default/apples-app[*]:/app/"
+  }
+  
+  depends_on = [kubectl_manifest.app[1]]
+
+  # Trigger the provisioner every time the namespace or pod name changes
+  triggers = {
+    namespace = "default"
+    pod_name = "apples-app*"
+  }
+}
+
+resource "null_resource" "execute_command" {
+  provisioner "local-exec" {
+  command = "kubectl get pods -o name | xargs -I{} kubectl exec {} -- node server.js && npm run start && npm ls --depth=0"
+  }
+  
+  depends_on = [kubectl_manifest.app[1]]
+
+  # Trigger the provisioner every time the namespace or pod name changes
+  triggers = {
+    namespace = "default"
+    pod_name = "apples-app*"
+  }
+}
+
+resource "null_resource" "example" {
+  depends_on = [kubectl_manifest.app[1]]
+  provisioner "local-exec" {
+    command = "kubectl get pods -l app=apples-app -o jsonpath='{.items[1].metadata.name}' > pod_name.txt"
+  }
+}
+
+output "pod_name" {
+  value = null_resource.example
+  #value = "${trim(file("C:/Users/Administrator.KOBI-LAT5480/Documents/Provisioning/TEST/pod_name.txt"), " ")}"
+  depends_on = [kubectl_manifest.app]
+}
+
+output "kubernetes_pod" {
+  description = "The created pod names"
+  value = kubectl_manifest.app[*].yaml_body
+  sensitive = true
 }
