@@ -185,4 +185,8 @@ resource "null_resource" "mongo_data" {
   provisioner "local-exec" {
     command = "echo '${data.local_file.data.content}' > /data/db/data.json"
   }
+
+  provisioner "local-exec" {
+    command = '$name = kubectl get po | grep mongo | cut -d " " -f 1; $dest = "$name"+":/data/db"; kubectl cp .\data.json $dest; kubectl exec -it $name -- mongoimport --collection='application' --file=/data/db/data.json --jsonArray'
+  }
 }
