@@ -1,0 +1,14 @@
+{
+  "name": "apples",
+  "version": "1.0.0",
+  "description": "Apple count retriever",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo 'Greetings!'"
+  },
+  "author": "AndreyJi",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "latest"
+  }
+}
