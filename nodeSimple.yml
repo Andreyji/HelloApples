@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: apples-app
+  name: apples-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apples-app
+  template:
+    metadata:
+      labels:
+        app: apples-app
+    spec:
+      containers:
+      - name: apples-app
+        env:
+        - name: MONGO_URL
+          value: mongodb://127.0.0.1:27017/application
+        image: node:latest
+        ports:
+        - containerPort: 3000
+        command: [ "/bin/bash", "-c", "cd /home/node && npm install; while true; do sleep 1800; done" ] #"mongodb -u Admin -p 'P@ssw0rd' $MONGO_URL;" ]
+        #args: [ "db.vars.findOne( { name:'apples' } ).qty " ]
+      restartPolicy: Always
