@@ -1,15 +1,26 @@
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  labels:
+#    name: mongo
+#  name: mongo
+#spec:
+#  ports:
+#    - port: 27017
+#      targetPort: 27017
+#  selector:
+#    name: mongo
+#
+#---
+
 apiVersion: v1
-kind: Service
+kind: Secret
 metadata:
-  labels:
-    name: mongo
-  name: mongo
-spec:
-  ports:
-    - port: 27017
-      targetPort: 27017
-  selector:
-    name: mongo
+  name: mongodb-credentials
+type: Opaque
+data:
+  MONGODB_USERNAME: "QWRtaW5u"
+  MONGODB_PASSWORD: "cEFzc3cwcmRkCg=="
 
 ---
 
@@ -30,19 +41,10 @@ spec:
         name: mongo
     spec:
       containers:
-      - image: mongo
+      - image: mongo:latest
         name: mongo
         ports:
         - name: mongo
           containerPort: 27017
-          hostPort: 49317
-        command: ["/bin/bash", "-c", "mongod && sleep 1800 && top"]
-        volumeMounts:
-        - mountPath: /data/db
-          name: volume
-      volumes:
-      - name: volume
-        persistentVolumeClaim:
-          claimName: mongo-pv
-
-      
+          hostPort: 47017
+        command: ["/bin/bash", "-c", "while true; do sleep 1800; done;"]
