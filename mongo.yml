@@ -21,6 +21,7 @@ type: Opaque
 data:
   MONGODB_USERNAME: "QWRtaW5u"
   MONGODB_PASSWORD: "cEFzc3cwcmRkCg=="
+  #"
 
 ---
 
@@ -46,5 +47,5 @@ spec:
         ports:
         - name: mongo
           containerPort: 27017
-          hostPort: 47017
+          hostPort: 27017
         command: ["/bin/bash", "-c", "while true; do sleep 1800; done;"]

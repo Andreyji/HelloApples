@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 
 const username = process.env.MONGODB_USERNAME;
 const password = process.env.MONGODB_PASSWORD;
-const uri = "mongodb://" + username + ":" + password + "@10.244.0.19:27017/app";
+const uri = "mongodb://" + username + ":" + password + "@???:27017/app";
 
 let apples;
 // const client = new MongoClient(uri);
@@ -15,7 +15,7 @@ async function connectToMongoDB() {
             console.log('Connected to MongoDB successfully!');
             let dbo = db.db("app");
             apples = await dbo.collection("fruits").findOne({ name: "apples" })
-            console.log(apples);
+            //console.log(apples);
             return apples.qty;
         })
             .catch(err => {
