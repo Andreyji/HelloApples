@@ -1,25 +1,25 @@
 variable "subscription_id" {
   type        = string
   description = "The ID of the Azure subscription to use."
-  default 	  = "77f32f18-c9f5-49b3-aa7a-c874811a59ec"
+  default 	  = [ENTER VALUE]
 }
 
 variable "client_id" {
   type        = string
   description = "The ID of the Service Principal used for authentication."
-  default 	  = "d7680f93-6e83-49a0-b679-f6e13f8b2081"
+  default 	  = [ENTER VALUE]
 }
 
 variable "client_secret" {
   type        = string
   description = "The secret associated with the Service Principal."
-  default 	  = "g1K8Q~toRhOtV4JsRTxgK7eEsc~wKG-_O.MuzaI5"
+  default 	  = [ENTER VALUE]
 }
 
 variable "tenant_id" {
   type        = string
   description = "The ID of the Azure AD tenant."
-  default 	  = "86601a9f-7015-4b7e-b0ce-3917312ed604"
+  default 	  = [ENTER VALUE]
 }
 
 variable "location" {
