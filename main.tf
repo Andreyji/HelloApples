@@ -68,15 +68,6 @@ resource "azurerm_subnet" "aks_subnet" {
 }  
 
 
-# Create public IP
-resource "azurerm_public_ip" "lb" {
-  name                = "testip"
-  location            = azurerm_resource_group.aks.location
-  resource_group_name = azurerm_resource_group.aks.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
 # Create the AKS cluster
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_name
@@ -96,13 +87,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     client_secret = var.client_secret
   }
 
-  network_profile {
-    network_plugin = "azure"
-    load_balancer_sku = "standard"
-    load_balancer_profile {
-      outbound_ip_address_ids = [azurerm_public_ip.lb.id]
-    }
-  }
   depends_on = [
     azurerm_subnet.aks_subnet
   ]
@@ -252,8 +236,3 @@ resource "null_resource" "test" {
 #  value = kubectl_manifest.app[*].yaml_body
 #  sensitive = true
 #}
-
-output "serviceIp" {
-  value = azurerm_public_ip.lb.ip_address
-}
-

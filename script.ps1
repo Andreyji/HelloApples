@@ -38,9 +38,10 @@ write-host "5. creation is ready.";
 } catch { write-host $PSItem.Exception.Message } 
 
 try {
-kubectl exec -it $app -- /bin/bash -c 'node /home/node/creation.js \&'; write-host "6. app is running.";
+Start-Process -FilePath kubectl.exe -ArgumentList "exec -it $app -- node /home/node/creation.js" -WindowStyle Hidden
+$addr = kubectl get svc apples-app-service | awk 'NR==2 {print $4}'
+write-host "6. app is running on address $addr.";
 } catch { write-host $PSItem.Exception.Message } 
-write-host "6. app is running.";
 
   #connecting 
 #$mpass = kubectl get secret mongodb-credentials -o jsonpath='{.data.MONGODB_PASSWORD}' 
