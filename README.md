@@ -6,6 +6,7 @@ The app is being provisioned on AKS, using 2 single poded (for the moment) deplo
 **first** of which is the Mongo DB mounting the data from the **data.json** file and 
 **the second** is the node.js app itself that simply presents the webpage on the provisioned address 
 using one argument from the "fruits" collection to ensure successfull connection.
+Also there is a secret for db credentials and a Load Balancer service to expose it all.
 
 Note that there are two stages of provision: one to create the resources on AKS
 and the other (running the script) to setup the app itself.
