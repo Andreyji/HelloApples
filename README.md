@@ -15,7 +15,7 @@ Instructions follows:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the provision of the Apples app it is assumed that you have the environment set: 
-* Azure subscription with a service principal which has the rights to create and manage AKS
+* Azure subscription with an app registration, which has the rights to create and manage AKS
 * Terraform installed on your system
 * kubectl command line utils
   
